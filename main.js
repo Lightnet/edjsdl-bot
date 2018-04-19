@@ -10,6 +10,8 @@ var express  = require('express')
 require('dotenv').config();
 const PORT = process.env.PORT || 3000;
 
+var bots = [];
+
 //Site API
 const DISCORDAPIID = process.env.DISCORDAPIID;
 const DISCORDAPISECERT = process.env.DISCORDAPISECERT;
@@ -104,10 +106,14 @@ const io = socketIO(requestHandler);
 io.use(function(socket, next){
   // Wrap the express middleware
   sessionMiddleware(socket.request, {}, next);
-})
+});
 
+//socket.io connect event
 io.on('connection', function(socket){
   //check if pastport exist
+
+  console.log("bots:",bots.length);
+
   let passport = socket.request.session.passport;
   if(passport){
     if(!passport.user){
@@ -126,21 +132,31 @@ io.on('connection', function(socket){
   });
 });
 
+
+
 //init discord app
 const Discord = require('discord.js');
-//init client bot
-const client = new Discord.Client();
 
-client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-});
+function addbot(token){
+  //init client bot
+  const client = new Discord.Client();
 
-client.on('message', msg => {
-  if (msg.content === 'ping') {
-    msg.reply('Pong!');
-  }
-});
-//login as bot
-client.login(DISCORDBOTTOKEN);
+  client.on('ready', () => {
+    console.log(`Logged in as ${client.user.tag}!`);
+  });
+
+  client.on('message', msg => {
+    if (msg.content === 'ping') {
+      msg.reply('Pong!');
+    }
+  });
+
+  //login as bot
+  client.login(token);
+  return client;
+}
+
+let client = addbot(DISCORDBOTTOKEN);
+bots.push(client);
 
 //<iframe src="https://discordapp.com/widget?id=xxxx&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0"></iframe>

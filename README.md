@@ -5,11 +5,13 @@ Creadted by: Lightnet
 # Required:
  * Nodejs
  * Discordapp
- * 
+ * Visual Studio Code ( Optional )
 
 # Information:
  By using express and discord.js to manage the bot management.
 
+# Prototype Build:
+ * https://glitch.com/edit/#!/lemon-hallway
 
 # Tips:
  * https://discordapp.com/developers/applications/me
