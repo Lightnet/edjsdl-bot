@@ -3,7 +3,6 @@
   Information: Server Entry
   
 */
-
 'use strict';
 
 import express from 'express';
@@ -15,6 +14,8 @@ import refresh from 'passport-oauth2-refresh';
 import socketIO from 'socket.io';
 
 var Strategy = require('passport-discord').Strategy
+
+var LevelStore = require('level-session-store')(session);
 
 var app = express();
 require('dotenv').config();
@@ -32,9 +33,13 @@ const DISCORDBOTTOKEN = process.env.DISCORDBOTTOKEN || '';
 
 app.use(express.static('public'));
 passport.serializeUser(function(user, done) {
+  //console.log("serializeUser:",user);
+  console.log("serializeUser:");
   done(null, user);
 });
 passport.deserializeUser(function(obj, done) {
+  //console.log("deserializeUser:",obj);
+  console.log("deserializeUser:");
   done(null, obj);
 });
 
@@ -48,7 +53,7 @@ passport.use(new Strategy({
     scope: scopes
 }, function(accessToken, refreshToken, profile, done) {
     //profile.refreshToken = refreshToken; // store this for later refreshes
-    console.log(refreshToken);
+    //console.log(refreshToken);
     process.nextTick(function() {
         return done(null, profile);
     });
@@ -57,11 +62,12 @@ passport.use(new Strategy({
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
+//session
 var sessionMiddleware = session({
   secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: false
-})
+  //maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  store: new LevelStore()
+});
 
 //session
 app.use(sessionMiddleware);
@@ -72,7 +78,7 @@ app.get('/', checkAuth, function(req, res) {
   //console.log(res);
   //console.log("req.session.user");
   //console.log(req.session.passport.user.username);
-  console.log(req.session.passport.user);
+  //console.log(req.session.passport.user);
   res.render('index',{user:req.session.passport.user});
 });
 //login url
@@ -99,27 +105,29 @@ app.get('/info', checkAuth, function(req, res) {
 });
 //check authenticate 
 function checkAuth(req, res, next) {
-    if (req.isAuthenticated()) return next();
-    //res.send('not logged in :(');
-    res.render('basics',{user:"Guest"});
+  if (req.isAuthenticated()) return next();
+  console.log("req.session.passport");
+  console.log(req.session.passport);
+  //res.send('not logged in :(');
+  res.render('basics',{user:"Guest"});
 }
 //server listen start
 let requestHandler = app.listen(PORT, function (err) {
     if (err) return console.log(err)
     console.log(`Listening at http://${process.env.PROJECT_DOMAIN}:${PORT}`)
 });
-
+//===============================================
+// Socket.io
+//===============================================
 const io = socketIO(requestHandler);
-
 io.use(function(socket, next){
   // Wrap the express middleware
   sessionMiddleware(socket.request, {}, next);
 });
-
 //socket.io connect event
 io.on('connection', function(socket){
   //check if pastport exist
-  console.log("bots:",bots.length);
+  //console.log("bots:",bots.length);
   let passport = socket.request.session.passport;
   if(passport){
     if(!passport.user){
@@ -137,10 +145,11 @@ io.on('connection', function(socket){
     console.log('user disconnected');
   });
 });
-
-//init discord app
+//===============================================
+// Init discord js
+//===============================================
 const Discord = require('discord.js');
-var CommandSet = require('discord-routes').CommandSet;
+//var CommandSet = require('discord-routes').CommandSet;
 
 import DSJSBot from './src/server/DSJSBot';
 

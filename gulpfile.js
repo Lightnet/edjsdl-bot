@@ -9,6 +9,44 @@ var browserSync = require('browser-sync').create();
 
 var server = null;
 
+const commonModulejs = {
+    rules: [
+        { test: /\.css$/, loader: 'style!css' },
+        {
+            test: /\.scss$/,
+            loaders: ['style-loader', 'raw-loader', 'sass-loader']
+        },
+        {
+            test: /\.js$/,
+            include: [
+                path.resolve(__dirname, 'src')//,
+                //path.resolve(__dirname, 'node_modules/lance-gg'),
+                //fs.realpathSync('./node_modules/lance-gg')
+            ],
+            loader: 'babel-loader',
+            query: {
+                presets: ['babel-preset-env'].map(require.resolve)
+            }
+        }
+    ]
+}
+
+var frontGuestWebpackConfig = {
+    mode: "development",
+    entry: './src/client/clientGuestPoint.js',
+    output: {
+        path: path.join(__dirname, 'public'),
+        filename: 'clientGuest.js'
+    },
+    //watch: true,
+    watchOptions: {
+        aggregateTimeout: 300,
+        poll: 1000,
+        ignored: /node_modules/
+    },
+    module: commonModulejs
+};
+
 var frontWebpackConfig = {
     mode: "development",
     entry: './src/client/clientEntryPoint.js',
@@ -22,27 +60,8 @@ var frontWebpackConfig = {
         poll: 1000,
         ignored: /node_modules/
     },
-    module: {
-        rules: [
-            { test: /\.css$/, loader: 'style!css' },
-            {
-                test: /\.scss$/,
-                loaders: ['style-loader', 'raw-loader', 'sass-loader']
-            },
-            {
-                test: /\.js$/,
-                include: [
-                    path.resolve(__dirname, 'src')//,
-                    //path.resolve(__dirname, 'node_modules/lance-gg'),
-                    //fs.realpathSync('./node_modules/lance-gg')
-                ],
-                loader: 'babel-loader',
-                query: {
-                    presets: ['babel-preset-env'].map(require.resolve)
-                }
-            }
-        ]
-    }//,
+    module: commonModulejs
+    //,
     //resolve: {
         //alias: { 
           //"lance": path.resolve(__dirname, 'node_modules/lance-gg/src')
@@ -114,8 +133,16 @@ function onBuild(done) {
     }
 }
 
-gulp.task('frontend-build', function(done) {
+gulp.task('frontend-guest-build', function(done) {
     webpack(frontWebpackConfig).run(onBuild(done));
+});
+
+gulp.task('frontend-guest-watch', function() {
+    webpack(frontGuestWebpackConfig).watch(100, onBuild());
+});
+
+gulp.task('frontend-build', function(done) {
+    webpack(frontGuestWebpackConfig).run(onBuild(done));
 });
 
 gulp.task('frontend-watch', function() {
@@ -130,8 +157,11 @@ gulp.task('backend-watch', function() {
     webpack(backWebpackConfig).watch(100, onBuild());
 });
 
-gulp.task('build', ['frontend-build', 'backend-build']);
-gulp.task('watch', ['frontend-watch', 'backend-watch']);
+gulp.task('build', ['frontend-build', 'backend-build','frontend-guest-build']);
+gulp.task('watch', ['frontend-watch', 'backend-watch','frontend-guest-watch'],()=>{
+
+    gulp.watch(['./main.js'],['build']);
+});
 
 //start server
 gulp.task('serve',[], function() {

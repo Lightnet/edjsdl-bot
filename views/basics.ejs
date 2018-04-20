@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     -->
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/sioclient.js"></script>
     <script>
     //this from ejs variable setup
     var user = '<%= user %>';
@@ -15,10 +14,10 @@
 </head>
 <body>
     <div id="app">
-        <a href="/login">Login</a>
+        <a href="/login">Discordapp Auth Login</a>
         <p>Welcome {{ user }}, bot system management for controls!</p>    
     </div>
     
-    <script src="mainvue.js"></script>
+    <script src="clientGuest.js"></script>
 </body>
 </html>
