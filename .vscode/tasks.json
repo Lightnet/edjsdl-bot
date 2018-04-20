@@ -17,6 +17,41 @@
             "type": "npm",
             "script": "watch",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "startdev",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "startweb",
+            "problemMatcher": []
+        },
+        {
+            "type": "gulp",
+            "task": "build-backend",
+            "problemMatcher": []
+        },
+        {
+            "type": "gulp",
+            "task": "frontend-build",
+            "problemMatcher": []
+        },
+        {
+            "type": "gulp",
+            "task": "default",
+            "problemMatcher": []
+        },
+        {
+            "type": "gulp",
+            "task": "serve",
+            "problemMatcher": []
+        },
+        {
+            "type": "gulp",
+            "task": "browser-sync",
+            "problemMatcher": []
         }
     ]
 }

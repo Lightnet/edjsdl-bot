@@ -1,3 +1,9 @@
+/*
+  Created By: Lightnet
+  Information: Server Entry
+  
+*/
+
 'use strict';
 
 import express from 'express';
@@ -13,16 +19,16 @@ var Strategy = require('passport-discord').Strategy
 var app = express();
 require('dotenv').config();
 
-const PORT = process.env.PORT || 3000;
-
+const PORT = process.env.PORT || 8080;
+//discord bots
 var bots = [];
 
 //Site API
-const DISCORDAPIID = process.env.DISCORDAPIID;
-const DISCORDAPISECERT = process.env.DISCORDAPISECERT;
-const DISCORDAPICALLBACK = process.env.DISCORDAPICALLBACK;
+const DISCORDAPIID = process.env.DISCORDAPIID || '';
+const DISCORDAPISECERT = process.env.DISCORDAPISECERT || '';
+const DISCORDAPICALLBACK = process.env.DISCORDAPICALLBACK || '';
 //Bot
-const DISCORDBOTTOKEN = process.env.DISCORDBOTTOKEN;
+const DISCORDBOTTOKEN = process.env.DISCORDBOTTOKEN || '';
 
 app.use(express.static('public'));
 passport.serializeUser(function(user, done) {
@@ -98,7 +104,7 @@ function checkAuth(req, res, next) {
     res.render('basics',{user:"Guest"});
 }
 //server listen start
-let requestHandler = app.listen(3000, function (err) {
+let requestHandler = app.listen(PORT, function (err) {
     if (err) return console.log(err)
     console.log(`Listening at http://${process.env.PROJECT_DOMAIN}:${PORT}`)
 });

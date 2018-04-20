@@ -1,5 +1,10 @@
-console.log("test");
+/*
+    Created by: Lightnet
+    Information: Prototype
 
+*/
+
+console.log("client entry point!");
 var socket = io();
 
 socket.on('connect', function(){
@@ -15,17 +20,18 @@ socket.on('chat message', function(msg){
     console.log(msg);
 });
 
-
 var app = new Vue({
     el: '#app',
     data: {
-        message: user
+        user : user
+        //user: 'Guest'
         //message: 'Hello Vue!'
     },
     beforeMount(){
         //this.message ="hello";
         setTimeout( ()=> {
-        this.el = '#app';
+            //this.user = user;
+            this.el = '#app';
         },100);
     },
     mounted(){

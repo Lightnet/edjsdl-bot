@@ -15,11 +15,10 @@
 </head>
 <body>
     <div id="app">
-        {{ message }}
+        <a href="/login">Login</a>
+        <p>Welcome {{ user }}, bot system management for controls!</p>    
     </div>
-    <a href="/login">Login</a>
-    <p>Welcome <% if(user) {%><%= user %><% } %>, bot management for controls!</p>
-
+    
     <script src="mainvue.js"></script>
 </body>
 </html>

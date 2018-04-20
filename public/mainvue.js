@@ -1,7 +1,7 @@
 var app = new Vue({
     el: '#app',
     data: {
-        message: user
+        user: user
         //message: 'Hello Vue!'
     },
     beforeMount(){

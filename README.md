@@ -8,10 +8,10 @@ Creadted by: Lightnet
  * Visual Studio Code ( Optional )
 
 # Information:
- By using express and discord.js to manage the bot management.
+ By using express and discord.js to build the bot system and management. Using the Webpack and gulp to run auto build tasks. The reason for gulp for this project is to run front and back end builds. For developement on local pc builds.
 
 # Prototype Build:
- * https://glitch.com/edit/#!/lemon-hallway
+ * https://glitch.com/edit/#!/edjsdl-bot
 
 # Tips:
  * https://discordapp.com/developers/applications/me
@@ -49,3 +49,6 @@ This is a file for environment variables like your operate system path variables
  * http://www.lib4dev.com/info/Triforcey/discord-routes/128727103
  * https://www.npmjs.com/package/embed-creator
  * https://anidiotsguide_old.gitbooks.io/discord-js-bot-guide/content/examples/using-embeds-in-messages.html
+ * https://michaljanaszek.com/blog/combine-pwa-and-isomorphic-rendering
+ * https://hackernoon.com/hot-reload-all-the-things-ec0fed8ab0
+ * https://jlongster.com/Backend-Apps-with-Webpack--Part-II

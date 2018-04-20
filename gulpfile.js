@@ -1,14 +1,19 @@
 const path = require('path');
 const fs = require('fs');
-const webpack = require('webpack');
+var gulp = require('gulp');
+var webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
-const StartServerPlugin = require('start-server-webpack-plugin')
+//const StartServerPlugin = require('start-server-webpack-plugin');
+var gls = require('gulp-live-server');
+var browserSync = require('browser-sync').create();
+
+var server = null;
 
 var frontWebpackConfig = {
     mode: "development",
     entry: './src/client/clientEntryPoint.js',
     output: {
-        path: path.join(__dirname, 'dist'),
+        path: path.join(__dirname, 'public'),
         filename: 'bundle.js'
     },
     //watch: true,
@@ -64,7 +69,6 @@ const commonModule = {
 var backWebpackConfig = {
     mode: "development",
     target : 'node',
-    //target : 'async-node',
     entry: "./main.js",
     output: {
         path: path.resolve(__dirname, "./"),
@@ -95,7 +99,73 @@ var backWebpackConfig = {
     externals: [nodeExternals()],
 }
 
-var configuration = [frontWebpackConfig,backWebpackConfig ];
-//var configuration = [frontWebpackConfig ];
-//configuration.watch = true;
-module.exports = configuration;
+function onBuild(done) {
+    return function(err, stats) {
+        if(err) {
+            console.log('Error', err);
+        }
+        else {
+            console.log(stats.toString());
+        }
+    
+        if(done) {
+            done();
+        }
+    }
+}
+
+gulp.task('frontend-build', function(done) {
+    webpack(frontWebpackConfig).run(onBuild(done));
+});
+
+gulp.task('frontend-watch', function() {
+    webpack(frontWebpackConfig).watch(100, onBuild());
+});
+
+gulp.task('backend-build', function(done) {
+    webpack(backWebpackConfig).run(onBuild(done));
+});
+
+gulp.task('backend-watch', function() {
+    webpack(backWebpackConfig).watch(100, onBuild());
+});
+
+gulp.task('build', ['frontend-build', 'backend-build']);
+gulp.task('watch', ['frontend-watch', 'backend-watch']);
+
+//start server
+gulp.task('serve',[], function() {
+    //var server = gls.new('main.js');
+    if (server == null){
+        server = gls.new('./backend.js');
+    }
+    server.start();
+
+    //use gulp.watch to trigger server actions(notify, start or stop)
+    gulp.watch(['public/**/*.*'], function (file) {
+        //console.log("files change?");
+        if (server != null){
+            server.notify.apply(server, [file]);
+            server.start.bind(server)();
+        }
+        browserSync.reload();
+    });
+    // Note: try wrapping in a function if getting an error like `TypeError: Bad argument at TypeError (native) at ChildProcess.spawn`
+    gulp.watch('./backend.js', function() {
+        server.start.bind(server)();
+    });
+});
+
+//lanuch browser sync for proxy url
+gulp.task('browser-sync',['serve'], function() {
+    browserSync.init({
+        proxy: "localhost:8080"
+        ,files:['pulbic/**/*.*']
+        //,browser: 'chrome'
+        //,browser: 'firefox'
+    });
+});
+
+gulp.task('default', ['build','watch','serve','browser-sync']);
+//gulp.task('default', ['build','watch']);
+

@@ -1,7 +1,11 @@
 /*
+  Created by: Lightnet
 
-
+  Information: Prototype build.
+  
+  
 */
+
 var CommandSet = require('discord-routes').CommandSet;
 
 export default class DSJSBot{
