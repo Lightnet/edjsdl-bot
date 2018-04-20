@@ -1,13 +1,18 @@
-var express  = require('express')
-  , session  = require('express-session')
-  , passport = require('passport')
-  , Strategy = require('passport-discord').Strategy
-  , app      = express()
-  ,path = require('path')
-  ,refresh = require('passport-oauth2-refresh')
-  ,socketIO = require('socket.io');
+'use strict';
 
+import express from 'express';
+import session from 'express-session';
+import passport from 'passport';
+
+import path from 'path';
+import refresh from 'passport-oauth2-refresh';
+import socketIO from 'socket.io';
+
+var Strategy = require('passport-discord').Strategy
+
+var app = express();
 require('dotenv').config();
+
 const PORT = process.env.PORT || 3000;
 
 var bots = [];
@@ -27,8 +32,7 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
-//var scopes = ['identify', 'email', /* 'connections', (it is currently broken) */ 'guilds', 'guilds.join'];
-
+//var scopes = ['identify', 'email', 'guilds', 'guilds.join'];
 var scopes = ['identify', 'guilds'];
 
 passport.use(new Strategy({
@@ -47,13 +51,11 @@ passport.use(new Strategy({
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
-
 var sessionMiddleware = session({
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: false
 })
-
 
 //session
 app.use(sessionMiddleware);
@@ -111,9 +113,7 @@ io.use(function(socket, next){
 //socket.io connect event
 io.on('connection', function(socket){
   //check if pastport exist
-
   console.log("bots:",bots.length);
-
   let passport = socket.request.session.passport;
   if(passport){
     if(!passport.user){
@@ -132,24 +132,26 @@ io.on('connection', function(socket){
   });
 });
 
-
-
 //init discord app
 const Discord = require('discord.js');
+var CommandSet = require('discord-routes').CommandSet;
+
+import DSJSBot from './src/server/DSJSBot';
 
 function addbot(token){
   //init client bot
   const client = new Discord.Client();
 
-  client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
-  });
-
-  client.on('message', msg => {
-    if (msg.content === 'ping') {
-      msg.reply('Pong!');
-    }
-  });
+  //require('./src/server/DSJSBot')(client);
+  let bot = new DSJSBot(client);
+  //client.on('ready', () => {
+    //console.log(`Logged in as ${client.user.tag}!`);
+  //});
+  //client.on('message', msg => {
+    //if (msg.content === 'ping') {
+      //msg.reply('Pong!');
+    //}
+  //});
 
   //login as bot
   client.login(token);
