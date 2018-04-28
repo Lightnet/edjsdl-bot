@@ -12,12 +12,14 @@ import passport from 'passport';
 import path from 'path';
 import refresh from 'passport-oauth2-refresh';
 import socketIO from 'socket.io';
+import Gun from 'gun';
 
 var Strategy = require('passport-discord').Strategy
 
 var LevelStore = require('level-session-store')(session);
 
 var app = express();
+app.use(Gun.serve);
 require('dotenv').config();
 
 const PORT = process.env.PORT || 8080;
@@ -65,6 +67,8 @@ app.set('view engine', 'ejs');
 //session
 var sessionMiddleware = session({
   secret: 'keyboard cat',
+  resave: true,
+    saveUninitialized: true,
   //maxAge: 24 * 60 * 60 * 1000, // 24 hours
   store: new LevelStore()
 });
@@ -116,6 +120,11 @@ let requestHandler = app.listen(PORT, function (err) {
     if (err) return console.log(err)
     console.log(`Listening at http://${process.env.PROJECT_DOMAIN}:${PORT}`)
 });
+
+var gun = Gun({
+  //file: dbFile,
+  web:requestHandler//server express
+});
 //===============================================
 // Socket.io
 //===============================================
@@ -151,14 +160,14 @@ io.on('connection', function(socket){
 const Discord = require('discord.js');
 //var CommandSet = require('discord-routes').CommandSet;
 
-import DSJSBot from './src/server/DSJSBot';
+import dBotFramework from './src/server/DBotFramework';
 
 function addbot(token){
   //init client bot
   const client = new Discord.Client();
 
   //require('./src/server/DSJSBot')(client);
-  let bot = new DSJSBot(client);
+  let bot = new dBotFramework({client:client,io:io,gun:gun});
   //client.on('ready', () => {
     //console.log(`Logged in as ${client.user.tag}!`);
   //});

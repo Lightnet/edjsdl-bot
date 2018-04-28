@@ -196,6 +196,6 @@ gulp.task('browser-sync',['serve'], function() {
     });
 });
 
-gulp.task('default', ['build','watch','serve','browser-sync']);
-//gulp.task('default', ['build','watch']);
+//gulp.task('default', ['build','watch','serve','browser-sync']);
+gulp.task('default', ['build','watch','serve']);
 
