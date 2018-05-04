@@ -5,13 +5,17 @@
 	
 	
 */
+import RPGData from '../common/RPGData';
+import RPGCharacter from '../common/RPGCharacter';
+
+//console.log("RPGData");
+//console.log(RPGData);
 
 var CommandSet = require('discord-routes').CommandSet;
 
 export default class DBotFramework{
 
 	constructor(options){
-
 		this.client = options.client || null;
 		this.io = options.io || null;
 		this.gun = options.gun || null;
@@ -40,7 +44,6 @@ export default class DBotFramework{
 			req.reply('Pong!');
 		});
 
-
 		commands.set('status', req => {
 			req.reply('checking..!');
 			this.status(req);
@@ -61,7 +64,37 @@ export default class DBotFramework{
 	status(req){
 		//!c status
 		console.log('status!');
-		console.log(req);
+		console.log(req.author.username);
+		let gun = this.gun;
+
+		gun.get(req.author.id).once((data)=>{
+			//console.log(data);
+			if(data != null){
+				console.log("used!");
+				console.log("data >>> ");
+				console.log(data);
+			}else{
+				console.log("create");
+				
+				gun.get(req.author.id).put({
+					id:req.author.id,
+					username:req.author.username,
+					hp:100,
+					maxhp:100,
+					mp:100,
+					maxmp:100,
+					attack:2,
+					defense:1,
+					magicattack:1,
+					magicdefense:1,
+					exp:0,
+					nextexp:5,
+					level:0,
+
+				});
+				
+			}
+		});
 	}
 
 }

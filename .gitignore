@@ -6,3 +6,4 @@ backend.js
 public/bundle.js
 level-session-store/
 public/clientGuest.js
+data.json

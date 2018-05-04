@@ -11,3 +11,7 @@
  * https://jlongster.com/Backend-Apps-with-Webpack--Part-II
  * https://www.npmjs.com/package/session-rethinkdb
  * https://github.com/scriptollc/level-session-store
+
+
+ * https://github.com/TheTrain2000/Discord-Bot/wiki/Obtaining-Your-User-ID
+ * https://support.discordapp.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-
